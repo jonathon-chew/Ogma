@@ -56,19 +56,25 @@ var extToLang = map[string]string{
 	"ccs":   "CCS",
 }
 
-func HumanReadableInt(i int) string {
+func HumanReadableInt(initalInt int) string {
+	convertedNumber := strconv.Itoa(initalInt)
 	var humanReadbleNumber string
-	convertedNumber := strconv.Itoa(i)
+	count := 0
 
 	if len(convertedNumber) > 3 {
-		for i, v := range convertedNumber {
-			if i%3 == 0 && i != 0 {
-				humanReadbleNumber += ","
+		for i := len(convertedNumber) - 1; i >= 0; i-- {
+			humanReadbleNumber = string(convertedNumber[i]) + humanReadbleNumber
+			count++
+			if count%3 == 0 && i != 0 {
+				humanReadbleNumber = "," + humanReadbleNumber
 			}
-			humanReadbleNumber += string(v)
 		}
 	} else {
 		humanReadbleNumber = convertedNumber
+	}
+
+	if humanReadbleNumber[:len(humanReadbleNumber)-1] == "," {
+		humanReadbleNumber = humanReadbleNumber[:len(humanReadbleNumber)-3]
 	}
 
 	return humanReadbleNumber
@@ -128,6 +134,6 @@ func main() {
 	})
 
 	for _, printresult := range LangStats.LanguageStats {
-		Aphrodite.PrintColour("Green", fmt.Sprintf("\nName: %s,\nNumber of files: %s,\nNumber of Lines: %s\n\n", printresult.Name, HumanReadableInt(printresult.Files), HumanReadableInt(printresult.Lines)))
+		Aphrodite.PrintColour("Green", fmt.Sprintf("\nName: %s,\nNumber of files: %s,\nNumber of Lines: %s\n", printresult.Name, HumanReadableInt(printresult.Files), HumanReadableInt(printresult.Lines)))
 	}
 }
