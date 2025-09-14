@@ -10,6 +10,8 @@ import (
 	"strconv"
 	"strings"
 
+	cmd "github.com/jonathon-chew/Lines_Of_Code/cmd"
+
 	Aphrodite "github.com/jonathon-chew/Aphrodite"
 )
 
@@ -61,26 +63,27 @@ func HumanReadableInt(initalInt int) string {
 	var humanReadbleNumber string
 	count := 0
 
-	if len(convertedNumber) > 3 {
-		for i := len(convertedNumber) - 1; i >= 0; i-- {
-			humanReadbleNumber = string(convertedNumber[i]) + humanReadbleNumber
-			count++
-			if count%3 == 0 && i != 0 {
-				humanReadbleNumber = "," + humanReadbleNumber
-			}
-		}
-	} else {
-		humanReadbleNumber = convertedNumber
+	if len(convertedNumber) <= 3 {
+		return convertedNumber
 	}
 
-	if humanReadbleNumber[:len(humanReadbleNumber)-1] == "," {
-		humanReadbleNumber = humanReadbleNumber[:len(humanReadbleNumber)-3]
+	for i := len(convertedNumber) - 1; i >= 0; i-- {
+		humanReadbleNumber = string(convertedNumber[i]) + humanReadbleNumber
+		count++
+		if count%3 == 0 && i != 0 {
+			humanReadbleNumber = "," + humanReadbleNumber
+		}
 	}
 
 	return humanReadbleNumber
 }
 
 func main() {
+
+	if len(os.Args[1:]) >= 1 {
+		cmd.Cmd(os.Args)
+	}
+
 	root := "./"
 	var LangStats Results
 	filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
