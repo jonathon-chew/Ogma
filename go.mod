@@ -1,4 +1,4 @@
-module github.com/jonathon-chew/Lines_Of_Code
+module github.com/jonathon-chew/Ogma
 
 go 1.25.1
 

@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"strings"
 
-	cmd "github.com/jonathon-chew/Lines_Of_Code/cmd"
+	cmd "github.com/jonathon-chew/Ogma/cmd"
 
 	Aphrodite "github.com/jonathon-chew/Aphrodite"
 )
