@@ -21,10 +21,6 @@ type LanguageStats struct {
 	Lines int
 }
 
-type Results struct {
-	LanguageStats []LanguageStats
-}
-
 var extToLang = map[string]string{
 	"py":    "Python",
 	"js":    "JavaScript",
@@ -85,7 +81,7 @@ func main() {
 	}
 
 	root := "./"
-	var LangStats Results
+	var LangStats []LanguageStats
 	filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
 		if err != nil || d.IsDir() {
 			return err // stop on error
@@ -114,29 +110,27 @@ func main() {
 		if strings.Contains(filepath.Ext(d.Name()), ".") && isMapContainsKey {
 
 			var found bool = false
-			for i := range LangStats.LanguageStats {
-				if LangStats.LanguageStats[i].Name == extToLang[fileExtension] {
-					LangStats.LanguageStats[i].Files += 1
-					LangStats.LanguageStats[i].Lines += lines
+			for i := range LangStats {
+				if LangStats[i].Name == extToLang[fileExtension] {
+					LangStats[i].Files += 1
+					LangStats[i].Lines += lines
 					found = true
 					break
 				}
 			}
 
 			if !found {
-				LangStats.LanguageStats = append(LangStats.LanguageStats, LanguageStats{
+				LangStats = append(LangStats, LanguageStats{
 					Name:  extToLang[fileExtension],
 					Files: 1,
 					Lines: lines,
 				})
 			}
-
 		}
-
 		return nil
 	})
 
-	for _, printresult := range LangStats.LanguageStats {
-		Aphrodite.PrintColour("Green", fmt.Sprintf("\nName: %s,\nNumber of files: %s,\nNumber of Lines: %s\n", printresult.Name, HumanReadableInt(printresult.Files), HumanReadableInt(printresult.Lines)))
+	for _, printresult := range LangStats {
+		Aphrodite.PrintColour("Green", fmt.Sprintf("\nName: %s,\t\tNo. files: %s,\t\tNo. Lines: %s\n", printresult.Name, HumanReadableInt(printresult.Files), HumanReadableInt(printresult.Lines)))
 	}
 }
