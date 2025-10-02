@@ -54,6 +54,8 @@ var extToLang = map[string]string{
 	"ccs":   "CCS",
 }
 
+/* Convert a int into a string, but make it human readbale by working backwards and applying commas in the right place to split up the number
+ */
 func HumanReadableInt(initalInt int) string {
 	convertedNumber := strconv.Itoa(initalInt)
 	var humanReadbleNumber string
@@ -87,6 +89,7 @@ func main() {
 			return err // stop on error
 		}
 
+		// Pass back a pointer to a file and an error if it fails
 		PointerToFile, OpenFileError := os.Open(path)
 		if OpenFileError != nil {
 			log.Printf("error opening the file %s", path)
@@ -131,6 +134,7 @@ func main() {
 	})
 
 	for _, printresult := range LangStats {
+		// (#1) TODO: Convert this to %-47s format to reserve x number of spaces, this just needs to be the longest value of the map
 		Aphrodite.PrintColour("Green", fmt.Sprintf("\nName: %s,\t\tNo. files: %s,\t\tNo. Lines: %s\n", printresult.Name, HumanReadableInt(printresult.Files), HumanReadableInt(printresult.Lines)))
 	}
 }
