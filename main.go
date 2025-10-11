@@ -133,18 +133,26 @@ func main() {
 		return nil
 	})
 
-	var biggestLength int
+	var biggestLangLength int
 	for _, longestLang := range LangStats {
-		if len(longestLang.Name) > biggestLength {
-			biggestLength = len(longestLang.Name)
+		if len(longestLang.Name) > biggestLangLength {
+			biggestLangLength = len(longestLang.Name)
 		}
 	}
 
-	biggestLength = biggestLength + 4
+	var biggestNumberOfFilesLength int
+	for _, longestLang := range LangStats {
+		if len(longestLang.Name) > biggestNumberOfFilesLength {
+			biggestNumberOfFilesLength = len(longestLang.Name)
+		}
+	}
+
+	// biggestLangLength = biggestLangLength + 4
+	biggestNumberOfFilesLength = len(HumanReadableInt(biggestNumberOfFilesLength))
 
 	for _, printresult := range LangStats {
 		// (#1) TODO: Convert this to %-47s format to reserve x number of spaces, this just needs to be the longest value of the map
-		sentence := fmt.Sprintf("\nName: %%-%ds    No. files: %%s,   No. Lines: %%s\n", biggestLength)
+		sentence := fmt.Sprintf("\nName: %%-%ds    No. files: %%-%ds   No. Lines: %%s\n", biggestLangLength, biggestNumberOfFilesLength)
 		Aphrodite.PrintColour("Green", fmt.Sprintf(sentence, printresult.Name, HumanReadableInt(printresult.Files), HumanReadableInt(printresult.Lines)))
 	}
 }
