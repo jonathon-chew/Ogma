@@ -1,4 +1,7 @@
 # Lines of Code Analyzer - Ogma
+<p align="center">
+<img width="400" src="doc/images/Ogma.png" alt="Ogma" title="Ogma" />
+</p>
 
 A simple Golang-based utility that scans a project directory and reports the number of **files** and **lines of code** for various programming languages.  
 

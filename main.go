@@ -147,7 +147,7 @@ func main() {
 		}
 	}
 
-	// biggestLangLength = biggestLangLength + 4
+	// cdbiggestLangLength = biggestLangLength + 4
 	biggestNumberOfFilesLength = len(HumanReadableInt(biggestNumberOfFilesLength))
 
 	for _, printresult := range LangStats {
