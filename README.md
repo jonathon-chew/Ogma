@@ -34,7 +34,7 @@ go build -o Ogma
 
 Run the program in a project directory to analyze code:
 
-./loc-analyzer
+./Ogma
 
 Optionally, you can pass CLI arguments that will be handled by the cmd
 

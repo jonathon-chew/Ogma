@@ -79,7 +79,7 @@ func HumanReadableInt(initalInt int) string {
 func main() {
 
 	if len(os.Args[1:]) >= 1 {
-		cmd.Cmd(os.Args)
+		cmd.Cmd(os.Args[1:])
 	}
 
 	root := "./"
