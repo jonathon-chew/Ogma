@@ -109,3 +109,8 @@ Install them using:
 
 go get github.com/jonathon-chew/Aphrodite
 go get github.com/jonathon-chew/Ogma/cmd
+
+### 🖌️ Attribution
+
+The Go Gopher was originally designed by [Renee French](https://reneefrench.blogspot.com/).  
+Used under the [Creative Commons Attribution 4.0 License](https://creativecommons.org/licenses/by/4.0/).  
