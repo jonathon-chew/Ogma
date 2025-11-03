@@ -52,6 +52,10 @@ var extToLang = map[string]string{
 	"sum":   "Golang",
 	"html":  "HTML",
 	"ccs":   "CCS",
+	"ps1": "Powershell",
+	"psm1": "Powershell",
+	"psd1": "Powershell",
+	"md" :  "Markdown",
 }
 
 /* Convert a int into a string, but make it human readbale by working backwards and applying commas in the right place to split up the number
