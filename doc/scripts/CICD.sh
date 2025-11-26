@@ -37,6 +37,7 @@ fi
 echo -e "${CYAN}🛠 Building all packages...${RESET}"
 if go build .; then
   echo -e "${GREEN} Build succeeded!${RESET}"
+	 go install .
 else
   echo -e "${RED} Build failed!${RESET}"
   exit 1
