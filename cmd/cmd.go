@@ -17,8 +17,6 @@ type Flags struct {
 // This is the function to manage command line arguments
 func Cmd(Arguments []string) Flags {
 
-	//(#2) TODO: Add in the ability to exclude certain files
-
 	//(#4) TODO: Add in the ability to ignore errors
 
 	var FlagArguments Flags
@@ -29,7 +27,7 @@ func Cmd(Arguments []string) Flags {
 		switch flag {
 
 		case "--version", "-v":
-			versionNumber := "v0.0.6"
+			versionNumber := "v0.0.7"
 			fmt.Printf("Version %s", versionNumber)
 			os.Exit(0)
 

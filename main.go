@@ -88,6 +88,7 @@ func main() {
 
 	root := "./"
 	var LangStats []LanguageStats
+
 	filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
 		if err != nil || d.IsDir() {
 			return err // stop on error
@@ -193,8 +194,17 @@ func main() {
 
 	biggestNumberOfFilesLength = len(HumanReadableInt(biggestNumberOfFilesLength))
 
+	var totalLines, totalFiles int
+
+	header := fmt.Sprintf("Name: %%-%ds No. files: %%-%dsNo. Lines: %%s\n", biggestLangLength, biggestNumberOfFilesLength)
+	Aphrodite.PrintBold("Cyan", fmt.Sprintf(header, " ", " ", " "))
+
 	for _, printresult := range LangStats {
-		sentence := fmt.Sprintf("\nName: %%-%ds    No. files: %%-%ds   No. Lines: %%s\n", biggestLangLength, biggestNumberOfFilesLength)
+		sentence := fmt.Sprintf("%%-%ds       %%-%ds           %%s\n", biggestLangLength, biggestNumberOfFilesLength)
 		Aphrodite.PrintColour("Green", fmt.Sprintf(sentence, printresult.Name, HumanReadableInt(printresult.Files), HumanReadableInt(printresult.Lines)))
+		totalFiles += printresult.Files
+		totalLines += printresult.Lines
 	}
+
+	Aphrodite.PrintBoldHighIntensity("Yellow", "\n\nTotal Lines: "+strconv.Itoa(totalLines)+" Total Files: "+strconv.Itoa(totalFiles))
 }
