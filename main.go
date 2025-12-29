@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"io/fs"
-	"log"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -82,8 +81,9 @@ func HumanReadableInt(initalInt int) string {
 
 func main() {
 
+	var cmdFlags cmd.Flags
 	if len(os.Args[1:]) >= 1 {
-		cmd.Cmd(os.Args[1:])
+		cmdFlags = cmd.Cmd(os.Args[1:])
 	}
 
 	root := "./"
@@ -93,10 +93,16 @@ func main() {
 			return err // stop on error
 		}
 
+		for _, ignoreFolder := range cmdFlags.IgnoreFolders {
+			if strings.Contains(path, ignoreFolder+"/") {
+				return nil
+			}
+		}
+
 		// Pass back a pointer to a file and an error if it fails
 		PointerToFile, OpenFileError := os.Open(path)
 		if OpenFileError != nil {
-			log.Printf("error opening the file %s", path)
+			fmt.Print("error opening the file " + path + "\n")
 			return nil
 		}
 
