@@ -16,7 +16,7 @@ func Cmd(Arguments []string) {
 
 	for _, v := range Arguments {
 		if v == "--version" || v == "-v"{
-			versionNumber := "0.0.1"
+			versionNumber := "v0.0.3"
 			fmt.Printf("Version %s", versionNumber)
 			os.Exit(0)
 		} else {

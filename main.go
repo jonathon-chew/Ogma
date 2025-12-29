@@ -110,13 +110,17 @@ func main() {
 			}
 		}
 
+		// Get the file extension
 		fileExtension := strings.ReplaceAll(filepath.Ext(d.Name()), ".", "")
 
-		_, isMapContainsKey := extToLang[fileExtension]
+		// Check if the extension is a known one
+		_, mapContainsKey := extToLang[fileExtension]
 
-		if strings.Contains(filepath.Ext(d.Name()), ".") && isMapContainsKey {
+		// If the file has an extension AND is a known one
+		if strings.Contains(filepath.Ext(d.Name()), ".") && mapContainsKey {
 
 			var found bool = false
+			// Loop through Language stats and if it exists add to it, else add it on
 			for i := range LangStats {
 				if LangStats[i].Name == extToLang[fileExtension] {
 					LangStats[i].Files += 1
@@ -133,10 +137,34 @@ func main() {
 					Lines: lines,
 				})
 			}
+		} else { // Add the extension as the language
+			if strings.Contains(filepath.Ext(d.Name()), ".") {
+
+				var found bool = false
+				// Loop through Language stats and if it exists add to it, else add it on
+				for i := range LangStats {
+					if LangStats[i].Name == filepath.Ext(d.Name())[1:] {
+						LangStats[i].Files += 1
+						LangStats[i].Lines += lines
+						found = true
+						break
+					}
+				}
+
+				if !found {
+					LangStats = append(LangStats, LanguageStats{
+						Name:  filepath.Ext(d.Name())[1:],
+						Files: 1,
+						Lines: lines,
+					})
+				}
+			}
 		}
 		return nil
 	})
 
+	// Logic for parsing out the contents well
+	// this maybe extracted later for a table implimentation
 	var biggestLangLength int
 	for _, longestLang := range LangStats {
 		if len(longestLang.Name) > biggestLangLength {
@@ -151,7 +179,6 @@ func main() {
 		}
 	}
 
-	// cdbiggestLangLength = biggestLangLength + 4
 	biggestNumberOfFilesLength = len(HumanReadableInt(biggestNumberOfFilesLength))
 
 	for _, printresult := range LangStats {
