@@ -57,8 +57,9 @@ var extToLang = map[string]string{
 	"md":    "Markdown",
 }
 
-/* Convert a int into a string, but make it human readbale by working backwards and applying commas in the right place to split up the number
- */
+/*
+Convert a int into a string, but make it human readbale by working backwards and applying commas in the right place to split up the number
+*/
 func HumanReadableInt(initalInt int) string {
 	convertedNumber := strconv.Itoa(initalInt)
 	var humanReadbleNumber string
@@ -178,14 +179,14 @@ func main() {
 
 	// Logic for parsing out the contents well
 	// this maybe extracted later for a table implimentation
-	var biggestLangLength int
+	var biggestLangLength int = len("No. files:")
 	for _, longestLang := range LangStats {
 		if len(longestLang.Name) > biggestLangLength {
 			biggestLangLength = len(longestLang.Name)
 		}
 	}
 
-	var biggestNumberOfFilesLength int
+	var biggestNumberOfFilesLength int = len("No. Lines:")
 	for _, longestLang := range LangStats {
 		if len(longestLang.Name) > biggestNumberOfFilesLength {
 			biggestNumberOfFilesLength = len(longestLang.Name)
@@ -196,15 +197,15 @@ func main() {
 
 	var totalLines, totalFiles int
 
-	header := fmt.Sprintf("Name: %%-%ds No. files: %%-%dsNo. Lines: %%s\n", biggestLangLength, biggestNumberOfFilesLength)
+	header := fmt.Sprintf("Name: %%-%ds No. files: %%-%ds No. Lines: %%s\n", biggestLangLength, biggestNumberOfFilesLength)
 	Aphrodite.PrintBold("Cyan", fmt.Sprintf(header, " ", " ", " "))
 
 	for _, printresult := range LangStats {
-		sentence := fmt.Sprintf("%%-%ds       %%-%ds           %%s\n", biggestLangLength, biggestNumberOfFilesLength)
+		sentence := fmt.Sprintf("%%-%ds %%-%ds %%s\n", biggestLangLength+len("No. files:"), biggestNumberOfFilesLength+len("No. Lines:"))
 		Aphrodite.PrintColour("Green", fmt.Sprintf(sentence, printresult.Name, HumanReadableInt(printresult.Files), HumanReadableInt(printresult.Lines)))
 		totalFiles += printresult.Files
 		totalLines += printresult.Lines
 	}
 
-	Aphrodite.PrintBoldHighIntensity("Yellow", "\n\nTotal Lines: "+strconv.Itoa(totalLines)+" Total Files: "+strconv.Itoa(totalFiles))
+	Aphrodite.PrintBoldHighIntensity("Yellow", "\n\nTotal Lines: "+HumanReadableInt(totalLines)+" Total Files: "+HumanReadableInt(totalFiles)+"\n")
 }
