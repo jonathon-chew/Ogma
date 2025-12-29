@@ -99,6 +99,12 @@ func main() {
 			}
 		}
 
+		for _, ignoreFile := range cmdFlags.IgnoreFiles {
+			if strings.Contains(d.Name(), ignoreFile) {
+				return nil
+			}
+		}
+
 		// Pass back a pointer to a file and an error if it fails
 		PointerToFile, OpenFileError := os.Open(path)
 		if OpenFileError != nil {

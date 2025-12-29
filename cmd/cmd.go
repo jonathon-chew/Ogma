@@ -5,10 +5,13 @@ import (
 	"log"
 	"os"
 	"strings"
+
+	aphrodite "github.com/jonathon-chew/Aphrodite"
 )
 
 type Flags struct {
 	IgnoreFolders []string
+	IgnoreFiles   []string
 }
 
 // This is the function to manage command line arguments
@@ -26,8 +29,26 @@ func Cmd(Arguments []string) Flags {
 		switch flag {
 
 		case "--version", "-v":
-			versionNumber := "v0.0.4"
+			versionNumber := "v0.0.6"
 			fmt.Printf("Version %s", versionNumber)
+			os.Exit(0)
+
+		case "--help", "-h":
+
+			aphrodite.PrintBold("Cyan", "Version\n")
+			aphrodite.PrintInfo("--version " + "-v\n\n")
+
+			aphrodite.PrintBold("Cyan", "Help\n")
+			aphrodite.PrintInfo("--help " + "-h\n\n")
+
+			aphrodite.PrintBold("Cyan", "Ignore a folder\n")
+			aphrodite.PrintInfo("--ignore " + "-i \n")
+			fmt.Print("Followed by the exact name to exclude - this can be a partial as long as it's the last part of the folder name\neg. .git will ignore any folders called .git, it would also work\n\n")
+
+			aphrodite.PrintBold("Cyan", "Ignore a file\n")
+			aphrodite.PrintInfo("--ignore-file " + "-if\n")
+			fmt.Print("Followed by the exact name to exclude - this can be a partial as long as it's the last part of the file name\neg. README will ignore any file called README, READ would also work, this also works/applies with file extensions\n\n")
+
 			os.Exit(0)
 
 		case "--ignore", "-i":
@@ -40,6 +61,24 @@ func Cmd(Arguments []string) Flags {
 				if !strings.HasPrefix(Arguments[i], "-") {
 					FlagArguments.IgnoreFolders = append(
 						FlagArguments.IgnoreFolders,
+						Arguments[i],
+					)
+					numberOfArguments++
+				} else {
+					break
+				}
+			}
+
+		case "--ignore-file", "-if":
+			if numberOfArguments+1 >= len(Arguments) {
+				log.Print("[ERROR]: no file found after -if flag")
+				return FlagArguments
+			}
+
+			for i := numberOfArguments + 1; i < len(Arguments); i++ {
+				if !strings.HasPrefix(Arguments[i], "-") {
+					FlagArguments.IgnoreFiles = append(
+						FlagArguments.IgnoreFiles,
 						Arguments[i],
 					)
 					numberOfArguments++
