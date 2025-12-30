@@ -220,12 +220,9 @@ func main() {
 
 	var totalLines, totalNonEmptyLines, totalFiles, totalWords int
 
-	// header := fmt.Sprintf("Name: %%-%ds No. files: %%-%ds No. words: %%-%ds No. Lines: %%s\n", biggestLangLength, biggestNumberOfFilesLength, biggestNumberOfWordsLength)
-	// Aphrodite.PrintBold("Cyan", fmt.Sprintf(header, " ", " ", " "))
+	sentence := fmt.Sprintf("%%-%ds %%-%ds %%-%ds %%-%ds %%s\n", biggestLangLength+len("Name:"), biggestNumberOfFilesLength+len("No. files:"), biggestNumberOfWordsLength+len("No. words:"), biggestNumberOfNonEmptyLinesLength+len("No. Non Empty Lines:"))
 
 	for i, printresult := range langStats {
-		sentence := fmt.Sprintf("%%-%ds %%-%ds %%-%ds %%-%ds %%s\n", biggestLangLength+len("Name:"), biggestNumberOfFilesLength+len("No. files:"), biggestNumberOfWordsLength+len("No. words:"), biggestNumberOfNonEmptyLinesLength+len("No. Non Empty Lines:"))
-
 		if i == 0 {
 			Aphrodite.PrintBold("Cyan", fmt.Sprintf(sentence, "Name: ", "No. Files:", "No. Words: ", "No. Non Empty Lines:", "No. Lines:"))
 		}
@@ -238,5 +235,7 @@ func main() {
 		totalWords += printresult.Words
 	}
 
-	Aphrodite.PrintBoldHighIntensity("Yellow", "\n\nTotal Lines: "+HumanReadableInt(totalLines)+" Total Files: "+HumanReadableInt(totalFiles)+" Total Words: "+HumanReadableInt(totalWords)+"\n")
+	total_sentence := fmt.Sprintf(sentence, "Totals:", HumanReadableInt(totalFiles), HumanReadableInt(totalWords), HumanReadableInt(totalNonEmptyLines), HumanReadableInt(totalLines))
+
+	Aphrodite.PrintBoldHighIntensity("Yellow", total_sentence)
 }
