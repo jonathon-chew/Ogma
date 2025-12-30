@@ -12,6 +12,7 @@ import (
 type Flags struct {
 	IgnoreFolders []string
 	IgnoreFiles   []string
+	IgnoreError   bool
 }
 
 // This is the function to manage command line arguments
@@ -84,6 +85,9 @@ func Cmd(Arguments []string) Flags {
 					break
 				}
 			}
+
+		case "--ignore-error", "-ie":
+			FlagArguments.IgnoreError = true
 
 		default:
 			log.Println("Unable to deal with argument:", flag)
