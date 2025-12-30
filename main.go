@@ -96,7 +96,7 @@ func main() {
 		}
 
 		for _, ignoreFolder := range cmdFlags.IgnoreFolders {
-			if strings.Contains(path, ignoreFolder+"/") {
+			if strings.Contains(path, ignoreFolder+"/") || strings.Contains(path, ignoreFolder+"\\") {
 				return nil
 			}
 		}
