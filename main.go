@@ -14,7 +14,7 @@ import (
 	Aphrodite "github.com/jonathon-chew/Aphrodite"
 )
 
-type LanguageStats struct {
+type languageStats struct {
 	Name          string
 	Files         int
 	Lines         int
@@ -36,6 +36,7 @@ var extToLang = map[string]string{
 	"php":   "PHP",
 	"rb":    "Ruby",
 	"ts":    "TypeScript",
+	"tsx":   "TypeScript",
 	"swift": "Swift",
 	"kt":    "Kotlin",
 	"scala": "Scala",
@@ -90,7 +91,7 @@ func main() {
 	}
 
 	root := "./"
-	var LangStats []LanguageStats
+	var langStats []languageStats
 
 	filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
 		if err != nil || d.IsDir() {
@@ -130,10 +131,6 @@ func main() {
 			words += len(strings.Fields(scanner.Text()))
 		}
 
-		/* 		if err := scanner.Err(); err != nil {
-			log.Panic(err)
-		} */
-
 		// Get the file extension
 		fileExtension := strings.ReplaceAll(filepath.Ext(d.Name()), ".", "")
 
@@ -145,19 +142,19 @@ func main() {
 
 			var found bool = false
 			// Loop through Language stats and if it exists add to it, else add it on
-			for i := range LangStats {
-				if LangStats[i].Name == extToLang[fileExtension] {
-					LangStats[i].Files += 1
-					LangStats[i].Lines += lines
-					LangStats[i].NonEmptyLines += nonEmptyLines
-					LangStats[i].Words += words
+			for i := range langStats {
+				if langStats[i].Name == extToLang[fileExtension] {
+					langStats[i].Files += 1
+					langStats[i].Lines += lines
+					langStats[i].NonEmptyLines += nonEmptyLines
+					langStats[i].Words += words
 					found = true
 					break
 				}
 			}
 
 			if !found {
-				LangStats = append(LangStats, LanguageStats{
+				langStats = append(langStats, languageStats{
 					Name:          extToLang[fileExtension],
 					Files:         1,
 					Lines:         lines,
@@ -170,19 +167,19 @@ func main() {
 
 				var found bool = false
 				// Loop through Language stats and if it exists add to it, else add it on
-				for i := range LangStats {
-					if LangStats[i].Name == filepath.Ext(d.Name())[1:] {
-						LangStats[i].Files += 1
-						LangStats[i].Lines += lines
-						LangStats[i].NonEmptyLines += nonEmptyLines
-						LangStats[i].Words += words
+				for i := range langStats {
+					if langStats[i].Name == filepath.Ext(d.Name())[1:] {
+						langStats[i].Files += 1
+						langStats[i].Lines += lines
+						langStats[i].NonEmptyLines += nonEmptyLines
+						langStats[i].Words += words
 						found = true
 						break
 					}
 				}
 
 				if !found {
-					LangStats = append(LangStats, LanguageStats{
+					langStats = append(langStats, languageStats{
 						Name:          filepath.Ext(d.Name())[1:],
 						Files:         1,
 						Lines:         lines,
@@ -197,12 +194,12 @@ func main() {
 
 	// Logic for parsing out the contents well
 	// this maybe extracted later for a table implimentation
-	var biggestLangLength int = len("Name:")
-	var biggestNumberOfFilesLength int = len("No. Files:")
-	var biggestNumberOfNonEmptyLinesLength int = len("No. Non Empty Lines:")
+	var biggestLangLength int
+	var biggestNumberOfFilesLength int
+	var biggestNumberOfNonEmptyLinesLength int
 	var biggestNumberOfWordsLength int = len("No. words:")
 
-	for _, longestLang := range LangStats {
+	for _, longestLang := range langStats {
 		if len(longestLang.Name) > biggestLangLength {
 			biggestLangLength = len(longestLang.Name)
 		}
@@ -226,14 +223,15 @@ func main() {
 	// header := fmt.Sprintf("Name: %%-%ds No. files: %%-%ds No. words: %%-%ds No. Lines: %%s\n", biggestLangLength, biggestNumberOfFilesLength, biggestNumberOfWordsLength)
 	// Aphrodite.PrintBold("Cyan", fmt.Sprintf(header, " ", " ", " "))
 
-	for i, printresult := range LangStats {
-		sentence := fmt.Sprintf("%%-%ds %%-%ds %%-%ds %%-%ds %%s\n", biggestLangLength+len("Name:"), biggestNumberOfFilesLength+len("No. files:"), biggestNumberOfWordsLength+len("No. words: "), biggestNumberOfNonEmptyLinesLength+len("No. Non Empty Lines: "))
+	for i, printresult := range langStats {
+		sentence := fmt.Sprintf("%%-%ds %%-%ds %%-%ds %%-%ds %%s\n", biggestLangLength+len("Name:"), biggestNumberOfFilesLength+len("No. files:"), biggestNumberOfWordsLength+len("No. words:"), biggestNumberOfNonEmptyLinesLength+len("No. Non Empty Lines:"))
 
 		if i == 0 {
 			Aphrodite.PrintBold("Cyan", fmt.Sprintf(sentence, "Name: ", "No. Files:", "No. Words: ", "No. Non Empty Lines:", "No. Lines:"))
-		} else {
-			Aphrodite.PrintColour("Green", fmt.Sprintf(sentence, printresult.Name, HumanReadableInt(printresult.Files), HumanReadableInt(printresult.Words), HumanReadableInt(printresult.NonEmptyLines), HumanReadableInt(printresult.Lines)))
 		}
+		results_sentence := fmt.Sprintf(sentence, printresult.Name, HumanReadableInt(printresult.Files), HumanReadableInt(printresult.Words), HumanReadableInt(printresult.NonEmptyLines), HumanReadableInt(printresult.Lines))
+		Aphrodite.PrintColour("Green", results_sentence)
+
 		totalFiles += printresult.Files
 		totalLines += printresult.Lines
 		totalNonEmptyLines += printresult.NonEmptyLines
