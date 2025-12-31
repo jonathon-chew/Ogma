@@ -63,6 +63,7 @@ eg. README will ignore any file called README, READ would also work, this also w
 
 ## 📊 Example Output
 
+```
 Name:            No. Files:  No. Words:   No. Non Empty Lines:  No. Lines:
 gitignore        1           8            6                     7
 txt              1           0            0                     0
@@ -72,6 +73,7 @@ Shell            1           205          63                    74
 Z Shell          1           46           4                     5
 Json             1           55           16                    16
 Totals:          10          1,898        507                   620
+```
 
 ## 📚 Supported Languages
 
