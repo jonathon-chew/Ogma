@@ -25,85 +25,101 @@ Clone the repository:
 ```bash
 git clone https://github.com/jonathon-chew/Ogma.git
 cd Ogma
+```
 
 Build the binary:
 
+```bash
 go build -o Ogma
+```
 
-📦 Usage
+## 📦 Usage
 
 Run the program in a project directory to analyze code:
-
+```bash
 ./Ogma
+```
 
-Optionally, you can pass CLI arguments that will be handled by the cmd
-
-package:
-
+Optionally, you can pass CLI arguments that will be handled by the cmd package:
+```bash
 ./Ogma <args>
+```
 
-📊 Example Output
+Version
+--version -v
 
-Name: Golang,        No. files: 12,        No. Lines: 1,542
-Name: Python,        No. files: 5,         No. Lines: 873
-Name: JavaScript,    No. files: 3,         No. Lines: 422
+Help
+--help -h
 
-📚 Supported Languages
+Ignore a folder
+--ignore -i 
+Followed by the exact name to exclude - this can be a partial as long as it's the last part of the folder name
+eg. .git will ignore any folders called .git, it would also work
+
+Ignore a file
+--ignore-file -if
+Followed by the exact name to exclude - this can be a partial as long as it's the last part of the file name
+eg. README will ignore any file called README, READ would also work, this also works/applies with file extensions
+
+## 📊 Example Output
+
+Name:            No. Files:  No. Words:   No. Non Empty Lines:  No. Lines:
+gitignore        1           8            6                     7
+txt              1           0            0                     0
+Markdown         1           479          97                    131
+Golang           4           1,105        321                   387
+Shell            1           205          63                    74
+Z Shell          1           46           4                     5
+Json             1           55           16                    16
+Totals:          10          1,898        507                   620
+
+## 📚 Supported Languages
 
 The tool supports a wide range of file extensions, mapped to their respective languages:
 Extension	Language
-.py	Python
-.js	JavaScript
+.py     Python
+.js	    JavaScript
 .java	Java
-.go	Golang
-.rs	Rust
+.go	    Golang
+.rs	    Rust
 .cpp	C++
 .c, .cc, .cxx	C / C++
-.cs	C#
+.cs	    C#
 .php	PHP
-.rb	Ruby
-.ts	TypeScript
+.rb	    Ruby
+.ts	    TypeScript
 .swift	Swift
-.kt	Kotlin
+.kt	    Kotlin
 .scala	Scala
-.r	R
+.r	    R
 .dart	Dart
-.hs	Haskell
-.m	Objective-C
+.hs	    Haskell
+.m	    Objective-C
 .qml	QML
-.jl	Julia
-.sh	Shell
-.pl	Perl
+.jl	    Julia
+.sh	    Shell
+.pl	    Perl
 .lua	Lua
 .sql	SQL
 .mod, .sum	Golang
 .html	HTML
 .css	CSS
 
+## 📝 How It Works
 
-📝 How It Works
+Walks the project directory recursively.
 
-    Walks the project directory recursively.
+For each file:
+Detects its extension.
 
-    For each file:
+If recognized, opens the file and counts words, lines and non-empty lines.
+Aggregates counts per language.
+Prints results in colorized output.
 
-        Detects its extension.
+## 🧩 Dependencies
 
-        If recognized, opens the file and counts non-empty lines.
-
-    Aggregates counts per language.
-
-    Prints results in colorized output.
-
-🧩 Dependencies
-
-    Aphrodite
-
-– for colorful console output.
-
-cmd
-
-    – for argument parsing.
+Aphrodite – for colorful console output.
+cmd – for argument parsing.
 
 Install them using:
 
