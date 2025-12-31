@@ -14,50 +14,88 @@ import (
 	Aphrodite "github.com/jonathon-chew/Aphrodite"
 )
 
-type languageStats struct {
-	Name          string
+type LanguageStats struct {
 	Files         int
 	Lines         int
 	NonEmptyLines int
 	Words         int
 }
 
+type LanguageStatsMap map[string]*LanguageStats
+
+const (
+	LangGoLang     = "Golang"
+	LangLua        = "Lua"
+	LangHaskell    = "Haskell"
+	LangPerl       = "Perl"
+	LangDart       = "Dart"
+	LangObjectiveC = "Objective-C"
+	LangCCS        = "CCS"
+	LangJava       = "Java"
+	LangPython     = "Python"
+	LangShell      = "Shell"
+	LangCSharp     = "C#"
+	LangSQL        = "SQL"
+	LangScala      = "Scala"
+	LangTypeScript = "TypeScript"
+	LangPowershell = "Powershell"
+	LangJulia      = "Julia"
+	LangPHP        = "PHP"
+	LangSwift      = "Swift"
+	LangQML        = "QML"
+	LangHTML       = "HTML"
+	LangC          = "C"
+	LangKotlin     = "Kotlin"
+	LangJavaScript = "JavaScript"
+	LangCPlus      = "C++"
+	LangRuby       = "Ruby"
+	LangMarkdown   = "Markdown"
+	LangR          = "R"
+	LangRust       = "Rust"
+	LangZShell     = "Z Shell"
+	LangJson       = "Json"
+)
+
 var extToLang = map[string]string{
-	"py":    "Python",
-	"js":    "JavaScript",
-	"java":  "Java",
-	"go":    "Golang",
-	"rs":    "Rust",
-	"cpp":   "C++",
-	"cc":    "C++",
-	"cxx":   "C++",
-	"c":     "C",
-	"cs":    "C#",
-	"php":   "PHP",
-	"rb":    "Ruby",
-	"ts":    "TypeScript",
-	"tsx":   "TypeScript",
-	"swift": "Swift",
-	"kt":    "Kotlin",
-	"scala": "Scala",
-	"r":     "R",
-	"dart":  "Dart",
-	"hs":    "Haskell",
-	"m":     "Objective-C",
-	"qml":   "QML",
-	"jl":    "Julia",
-	"sh":    "Shell",
-	"pl":    "Perl",
-	"lua":   "Lua",
-	"sql":   "SQL",
-	"mod":   "Golang",
-	"sum":   "Golang",
-	"html":  "HTML",
-	"ccs":   "CCS",
-	"ps1":   "Powershell",
-	"psm1":  "Powershell",
-	"psd1":  "Powershell",
-	"md":    "Markdown",
+	"py":    LangPython,
+	"js":    LangJavaScript,
+	"java":  LangJava,
+	"go":    LangGoLang,
+	"rs":    LangRust,
+	"cpp":   LangCPlus,
+	"cc":    LangCPlus,
+	"cxx":   LangCPlus,
+	"c":     LangC,
+	"h":     LangC,
+	"cs":    LangCSharp,
+	"php":   LangPHP,
+	"rb":    LangRuby,
+	"ts":    LangTypeScript,
+	"tsx":   LangTypeScript,
+	"swift": LangSwift,
+	"kt":    LangKotlin,
+	"scala": LangScala,
+	"r":     LangR,
+	"dart":  LangDart,
+	"hs":    LangHaskell,
+	"m":     LangObjectiveC,
+	"qml":   LangQML,
+	"jl":    LangJulia,
+	"sh":    LangShell,
+	"pl":    LangPerl,
+	"lua":   LangLua,
+	"sql":   LangSQL,
+	"mod":   LangGoLang,
+	"sum":   LangGoLang,
+	"html":  LangHTML,
+	"ccs":   LangHTML,
+	"ps1":   LangPowershell,
+	"psm1":  LangPowershell,
+	"psd1":  LangPowershell,
+	"md":    LangMarkdown,
+	"Md":    LangMarkdown,
+	"zsh":   LangZShell,
+	"json":  LangJson,
 }
 
 /*
@@ -83,6 +121,49 @@ func HumanReadableInt(initalInt int) string {
 	return humanReadbleNumber
 }
 
+/*
+Loop through Language stats and if it exists add to it, else add it on
+*/
+func addToList(stats LanguageStatsMap, lines, nonEmptyLines, words int, fileExtension string) {
+
+	if s, ok := stats[fileExtension]; ok {
+		s.Files++
+		s.Lines += lines
+		s.NonEmptyLines += nonEmptyLines
+		s.Words += words
+		return
+	}
+
+	stats[fileExtension] = &LanguageStats{
+		Files:         1,
+		Lines:         lines,
+		NonEmptyLines: nonEmptyLines,
+		Words:         words,
+	}
+
+}
+
+func countWords(b []byte) int {
+	inWord := false
+	count := 0
+
+	for _, c := range b {
+		if (c >= 'A' && c <= 'Z') ||
+			(c >= 'a' && c <= 'z') ||
+			(c >= '0' && c <= '9') ||
+			c == '_' {
+
+			if !inWord {
+				count++
+				inWord = true
+			}
+		} else {
+			inWord = false
+		}
+	}
+	return count
+}
+
 func main() {
 
 	var cmdFlags cmd.Flags
@@ -91,7 +172,10 @@ func main() {
 	}
 
 	root := "./"
-	var langStats []languageStats
+	stats := make(LanguageStatsMap)
+	var finalPrint []string
+	var totalLines, totalNonEmptyLines, totalFiles, totalWords, biggestLangLength, biggestNumberOfFilesLength, biggestNumberOfNonEmptyLinesLength int
+	var biggestNumberOfWordsLength int = len("No. words:")
 
 	filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
 		if err != nil || d.IsDir() {
@@ -119,89 +203,49 @@ func main() {
 
 		defer PointerToFile.Close()
 
+		// Get the stats
 		var nonEmptyLines, lines, words int
 		scanner := bufio.NewScanner(PointerToFile)
 		for scanner.Scan() {
-			if len(scanner.Text()) > 0 {
+			line := scanner.Bytes()
+
+			if len(line) > 0 {
 				nonEmptyLines++
+				words += countWords(line)
 			}
 
 			lines++
-
-			words += len(strings.Fields(scanner.Text()))
 		}
 
+		var fileExtension string = filepath.Ext(d.Name())
 		// Get the file extension
-		fileExtension := strings.ReplaceAll(filepath.Ext(d.Name()), ".", "")
+		if strings.Contains(filepath.Ext(d.Name()), ".") {
+			fileExtension = fileExtension[1:]
+		} else {
+			fileExtension = "Other"
+		}
 
 		// Check if the extension is a known one
 		_, mapContainsKey := extToLang[fileExtension]
 
 		// If the file has an extension AND is a known one
-		if strings.Contains(filepath.Ext(d.Name()), ".") && mapContainsKey {
-
-			var found bool = false
-			// Loop through Language stats and if it exists add to it, else add it on
-			for i := range langStats {
-				if langStats[i].Name == extToLang[fileExtension] {
-					langStats[i].Files += 1
-					langStats[i].Lines += lines
-					langStats[i].NonEmptyLines += nonEmptyLines
-					langStats[i].Words += words
-					found = true
-					break
-				}
-			}
-
-			if !found {
-				langStats = append(langStats, languageStats{
-					Name:          extToLang[fileExtension],
-					Files:         1,
-					Lines:         lines,
-					NonEmptyLines: nonEmptyLines,
-					Words:         words,
-				})
-			}
-		} else { // Add the extension as the language
-			if strings.Contains(filepath.Ext(d.Name()), ".") {
-
-				var found bool = false
-				// Loop through Language stats and if it exists add to it, else add it on
-				for i := range langStats {
-					if langStats[i].Name == filepath.Ext(d.Name())[1:] {
-						langStats[i].Files += 1
-						langStats[i].Lines += lines
-						langStats[i].NonEmptyLines += nonEmptyLines
-						langStats[i].Words += words
-						found = true
-						break
-					}
-				}
-
-				if !found {
-					langStats = append(langStats, languageStats{
-						Name:          filepath.Ext(d.Name())[1:],
-						Files:         1,
-						Lines:         lines,
-						NonEmptyLines: nonEmptyLines,
-						Words:         words,
-					})
-				}
+		if strings.Contains(filepath.Ext(d.Name()), ".") {
+			if mapContainsKey {
+				addToList(stats, lines, nonEmptyLines, words, extToLang[fileExtension])
+			} else {
+				addToList(stats, lines, nonEmptyLines, words, fileExtension)
 			}
 		}
+
 		return nil
 	})
 
 	// Logic for parsing out the contents well
 	// this maybe extracted later for a table implimentation
-	var biggestLangLength int
-	var biggestNumberOfFilesLength int
-	var biggestNumberOfNonEmptyLinesLength int
-	var biggestNumberOfWordsLength int = len("No. words:")
 
-	for _, longestLang := range langStats {
-		if len(longestLang.Name) > biggestLangLength {
-			biggestLangLength = len(longestLang.Name)
+	for Language, longestLang := range stats {
+		if len(Language) > biggestLangLength {
+			biggestLangLength = len(Language)
 		}
 		if len(HumanReadableInt(longestLang.Files)) > biggestNumberOfFilesLength {
 			biggestNumberOfFilesLength = len(HumanReadableInt(longestLang.Files))
@@ -218,22 +262,21 @@ func main() {
 	biggestNumberOfWordsLength = len(HumanReadableInt(biggestNumberOfWordsLength))
 	biggestNumberOfNonEmptyLinesLength = len(HumanReadableInt(biggestNumberOfNonEmptyLinesLength))
 
-	var totalLines, totalNonEmptyLines, totalFiles, totalWords int
+	sentence := fmt.Sprintf("%%-%ds %%-%ds %%-%ds %%-%ds %%s\n", biggestLangLength+len("Totals:"), biggestNumberOfFilesLength+len("No. files:"), biggestNumberOfWordsLength+len("No. words:"), biggestNumberOfNonEmptyLinesLength+len("No. Non Empty Lines:"))
 
-	sentence := fmt.Sprintf("%%-%ds %%-%ds %%-%ds %%-%ds %%s\n", biggestLangLength+len("Name:"), biggestNumberOfFilesLength+len("No. files:"), biggestNumberOfWordsLength+len("No. words:"), biggestNumberOfNonEmptyLinesLength+len("No. Non Empty Lines:"))
+	Aphrodite.PrintBold("Cyan", fmt.Sprintf(sentence, "Name: ", "No. Files:", "No. Words: ", "No. Non Empty Lines:", "No. Lines:"))
 
-	for i, printresult := range langStats {
-		if i == 0 {
-			Aphrodite.PrintBold("Cyan", fmt.Sprintf(sentence, "Name: ", "No. Files:", "No. Words: ", "No. Non Empty Lines:", "No. Lines:"))
-		}
-		results_sentence := fmt.Sprintf(sentence, printresult.Name, HumanReadableInt(printresult.Files), HumanReadableInt(printresult.Words), HumanReadableInt(printresult.NonEmptyLines), HumanReadableInt(printresult.Lines))
-		Aphrodite.PrintColour("Green", results_sentence)
+	for LanguageName, printresult := range stats {
+		results_sentence := fmt.Sprintf(sentence, LanguageName, HumanReadableInt(printresult.Files), HumanReadableInt(printresult.Words), HumanReadableInt(printresult.NonEmptyLines), HumanReadableInt(printresult.Lines))
+		finalPrint = append(finalPrint, results_sentence)
 
 		totalFiles += printresult.Files
 		totalLines += printresult.Lines
 		totalNonEmptyLines += printresult.NonEmptyLines
 		totalWords += printresult.Words
 	}
+
+	Aphrodite.PrintColour("Green", strings.Join(finalPrint, ""))
 
 	total_sentence := fmt.Sprintf(sentence, "Totals:", HumanReadableInt(totalFiles), HumanReadableInt(totalWords), HumanReadableInt(totalNonEmptyLines), HumanReadableInt(totalLines))
 
