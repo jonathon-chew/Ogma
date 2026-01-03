@@ -12,6 +12,7 @@ import (
 type Flags struct {
 	IgnoreFolders []string
 	IgnoreFiles   []string
+	IncludeFiles  []string
 	IgnoreError   bool
 }
 
@@ -58,6 +59,24 @@ func Cmd(Arguments []string) Flags {
 				if !strings.HasPrefix(Arguments[i], "-") {
 					FlagArguments.IgnoreFolders = append(
 						FlagArguments.IgnoreFolders,
+						Arguments[i],
+					)
+					numberOfArguments++
+				} else {
+					break
+				}
+			}
+
+		case "--include", "-in":
+			if numberOfArguments+1 >= len(Arguments) {
+				log.Print("[ERROR]: no file found after -in flag")
+				return FlagArguments
+			}
+
+			for i := numberOfArguments + 1; i < len(Arguments); i++ {
+				if !strings.HasPrefix(Arguments[i], "-") {
+					FlagArguments.IgnoreFiles = append(
+						FlagArguments.IncludeFiles,
 						Arguments[i],
 					)
 					numberOfArguments++
