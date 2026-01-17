@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	cmd "github.com/jonathon-chew/Ogma/cmd"
+	"github.com/jonathon-chew/Ogma/utils"
 
 	Aphrodite "github.com/jonathon-chew/Aphrodite"
 )
@@ -266,7 +267,9 @@ func main() {
 
 	Aphrodite.PrintBold("Cyan", fmt.Sprintf(sentence, "Name: ", "No. Files:", "No. Words: ", "No. Non Empty Lines:", "No. Lines:"))
 
-	for LanguageName, printresult := range stats {
+	for _, LanguageName := range utils.SortedKeys(stats) {
+		printresult := stats[LanguageName]
+
 		results_sentence := fmt.Sprintf(sentence, LanguageName, HumanReadableInt(printresult.Files), HumanReadableInt(printresult.Words), HumanReadableInt(printresult.NonEmptyLines), HumanReadableInt(printresult.Lines))
 		finalPrint = append(finalPrint, results_sentence)
 
